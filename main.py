@@ -1,9 +1,16 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from http.client import HTTPConnection
+import json
 
+# some sane defaults
 HOSTNAME = "localhost"
 PORT     = 8080
 
+# load config
+with open('config.json', 'r') as conf:
+    config = json.loads(conf.read())
+
+# handler class for all incoming HTTP requests
 class LoadBalancer(BaseHTTPRequestHandler):
     def do_GET(self):
 
