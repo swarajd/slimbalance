@@ -7,8 +7,12 @@ HOSTNAME = "localhost"
 PORT     = 8080
 
 # load config
-with open('config.json', 'r') as conf:
+with open("config.json", "r") as conf:
     config = json.loads(conf.read())
+
+# reading hosts
+host_index = 0
+hosts = config["hosts"]
 
 # handler class for all incoming HTTP requests
 class LoadBalancer(BaseHTTPRequestHandler):
@@ -17,7 +21,7 @@ class LoadBalancer(BaseHTTPRequestHandler):
         print(self.client_address)
         print(self.path)
 
-        conn = HTTPConnection('www.example.com', 80)
+        conn = HTTPConnection("www.example.com", 80)
         # print(conn)
         conn.request("GET", "/")
         resp = conn.getresponse()
@@ -26,7 +30,7 @@ class LoadBalancer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     load_balancer = ThreadingHTTPServer((HOSTNAME, PORT), LoadBalancer)
     print(f"Server started: http://{HOSTNAME}:{PORT}")
 
