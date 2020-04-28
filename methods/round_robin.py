@@ -2,7 +2,7 @@ class RoundRobin:
     def __init__(self, config):
         self.hosts = config["hosts"]
         self.idx = 0
-        self.host_len = len(hosts)
+        self.host_len = len(self.hosts)
 
     def incr(self):
         self.idx = (self.idx + 1) % self.host_len
