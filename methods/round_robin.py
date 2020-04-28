@@ -1,6 +1,6 @@
 class RoundRobin:
-    def __init__(self, hosts):
-        self.hosts = hosts
+    def __init__(self, config):
+        self.hosts = config["hosts"]
         self.idx = 0
         self.host_len = len(hosts)
 
