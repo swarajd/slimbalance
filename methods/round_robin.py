@@ -27,27 +27,48 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         pass
 
     def request_handler(self):
-        print(self.client_address)
-        print(self.path)
-        print(self.command)
-        print(self.requestline)
-        print(self.request_version)
-        print(self.rfile.read(
-            int(self.headers['Content-Length'])
-        ))
 
-        # host = self.context.get_host()
+        content_len = self.headers['Content-Length']
+        body=None
+        if content_len: 
+            body = self.rfile.read(int(content_len))
 
-        self.send_response(200)
+        host = self.context.get_host()
+
+        conn = HTTPConnection(host)
+        conn.request(
+            self.command, 
+            self.path,
+            headers=self.headers,
+            body=body
+        )
+
+        resp = conn.getresponse()
+
+        self.send_response(resp.status)
+
+        for header in resp.getheaders():
+            key, val = header
+            self.send_header(key, val)
         self.end_headers()
 
-        # conn = HTTPConnection(host)
-        # print(conn)
-        # conn.request("GET", self.path)
-        # resp = conn.getresponse()
-        # self.wfile.write(resp.read())
-        # self.wfile.close()
+        self.wfile.write(resp.read())
+
+    def do_GET(self):
+        self.request_handler()
+
+    def do_HEAD(self):
+        self.request_handler()
 
     def do_POST(self):
+        self.request_handler()
+
+    def do_PUT(self):
+        self.request_handler()
+
+    def do_DELETE(self):
+        self.request_handler()
+
+    def do_PATCH(self):
         self.request_handler()
         
