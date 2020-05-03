@@ -12,10 +12,8 @@ class Backend:
             self.alive = alive
 
     def is_alive(self):
-        alive = False
         with self.alive_lock:
-            alive = self.alive
-        return alive
+            return self.alive
 
     def __repr__(self):
         return f"(host: {self.host}, port: {self.port})"

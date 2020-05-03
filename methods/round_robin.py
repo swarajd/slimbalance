@@ -13,11 +13,9 @@ class RoundRobinContext:
         self.backend_len = len(self.backends)
 
     def next_index(self):
-        n_idx = -1
         with self.idx_lock:
             self.idx = (self.idx + 1) % self.backend_len
-            n_idx = self.idx
-        return n_idx
+            return self.idx
 
     def get_next_backend(self):
         next_idx = self.next_index()
@@ -27,7 +25,7 @@ class RoundRobinContext:
             idx = i % self.backend_len
             if self.backends[idx].is_alive():
                 if i != next_idx:
-                    with self.idx_lock():
+                    with self.idx_lock:
                         self.idx = idx
                 return self.backends[idx]
             i += 1
