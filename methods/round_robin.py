@@ -62,7 +62,7 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         # Check if the host matches the load balancer IP and replace accordingly
         if "Host" in self.headers and self.headers["Host"] == f"{HOSTNAME}:{PORT}":
             del self.headers["Host"]
-            self.headers["Host"] = backend.host
+            self.headers["Host"] = f"{backend.host}:{backend.port}"
 
         conn = HTTPConnection(backend.host, backend.port)
         conn.request(
