@@ -54,7 +54,7 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         backend = self.context.get_next_backend()
 
         if backend is None:
-            self.send_response(500)
+            self.send_response(503)
             self.end_headers()
             self.wfile.write(b'no backends available')
             return
