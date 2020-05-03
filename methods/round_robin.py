@@ -78,8 +78,6 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         headers = resp.getheaders()
         body = resp.read()
 
-        # print(status, headers, body)
-
         self.send_response(status)
 
         for header in headers:
