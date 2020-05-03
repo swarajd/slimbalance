@@ -1,6 +1,8 @@
 from http.server import BaseHTTPRequestHandler
 from http.client import HTTPConnection
 
+from config import HOSTNAME, PORT
+
 import threading
 
 class RoundRobinContext:
@@ -57,6 +59,11 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'no backends available')
             return
 
+        # Check if the host matches the load balancer IP and replace accordingly
+        if "Host" in self.headers and self.headers["Host"] == f"{HOSTNAME}:{PORT}":
+            del self.headers["Host"]
+            self.headers["Host"] = backend.host
+
         conn = HTTPConnection(backend.host, backend.port)
         conn.request(
             self.command, 
@@ -67,14 +74,20 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
 
         resp = conn.getresponse()
 
-        self.send_response(resp.status)
+        status = resp.status
+        headers = resp.getheaders()
+        body = resp.read()
 
-        for header in resp.getheaders():
+        # print(status, headers, body)
+
+        self.send_response(status)
+
+        for header in headers:
             key, val = header
             self.send_header(key, val)
         self.end_headers()
 
-        self.wfile.write(resp.read())
+        self.wfile.write(body)
 
     def do_GET(self):
         self.request_handler()

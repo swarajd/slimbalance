@@ -9,6 +9,8 @@ import socket
 from methods.util import Backend, process_config
 from methods.round_robin import RoundRobinContext, RoundRobinHandler
 
+from config import HOSTNAME, PORT
+
 def test():
     time.sleep(15)
     print("asdf bruh")
@@ -31,11 +33,6 @@ def health_checks(backends):
             alive = healthcheck(backend.host, backend.port)
             backend.set_alive(alive)
         time.sleep(20)
-    
-
-# some sane defaults
-HOSTNAME = "localhost"
-PORT     = 8080
 
 if __name__ == "__main__":
     # load config
