@@ -1,5 +1,8 @@
 {
-    "hosts": [
-        "localhost:8081"
+    "backends": [
+        {
+            "host": "localhost",
+            "port": 8081
+        }
     ]
 }

@@ -1,20 +1,36 @@
 from http.server import BaseHTTPRequestHandler
 from http.client import HTTPConnection
-# from functools import partial
+
 import threading
 
 class RoundRobinContext:
-    def __init__(self, config):
-        self.hosts = config["hosts"]
+    def __init__(self, backends):
+        self.backends = backends
         self.idx_lock = threading.Lock()
         self.idx = 0
-        self.host_len = len(self.hosts)
+        self.backend_len = len(self.backends)
 
-    def get_host(self):
-        host = self.hosts[self.idx]
+    def next_index(self):
+        n_idx = -1
         with self.idx_lock:
-            self.idx = (self.idx + 1) % self.host_len
-        return host
+            self.idx = (self.idx + 1) % self.backend_len
+            n_idx = self.idx
+        return n_idx
+
+    def get_next_backend(self):
+        next_idx = self.next_index()
+        l = self.backend_len + next_idx
+        i = next_idx
+        while i < l:
+            idx = i % self.backend_len
+            if self.backends[idx].is_alive():
+                if i != next_idx:
+                    with self.idx_lock():
+                        self.idx = idx
+                return self.backends[idx]
+            i += 1
+        
+        return None
 
 # handler class for all incoming HTTP requests
 class RoundRobinHandler(BaseHTTPRequestHandler):
@@ -33,9 +49,15 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         if content_len: 
             body = self.rfile.read(int(content_len))
 
-        host = self.context.get_host()
+        backend = self.context.get_next_backend()
 
-        conn = HTTPConnection(host)
+        if backend is None:
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(b'no backends available')
+            return
+
+        conn = HTTPConnection(backend.host, backend.port)
         conn.request(
             self.command, 
             self.path,
