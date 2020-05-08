@@ -19,9 +19,9 @@ class RoundRobinContext:
 
     def get_next_backend(self):
         next_idx = self.next_index()
-        l = self.backend_len + next_idx
+        max_idx = self.backend_len + next_idx
         i = next_idx
-        while i < l:
+        while i < max_idx:
             idx = i % self.backend_len
             if self.backends[idx].is_alive():
                 if i != next_idx:

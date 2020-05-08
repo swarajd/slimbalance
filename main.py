@@ -3,18 +3,11 @@ import socket
 import threading
 import time
 from functools import partial
-from http.client import HTTPConnection
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import ThreadingHTTPServer
 
 from config import HOSTNAME, PORT
 from methods.round_robin import RoundRobinContext, RoundRobinHandler
-from methods.util import Backend, process_config
-
-
-def test():
-    time.sleep(15)
-    print("asdf bruh")
-
+from methods.util import process_config
 
 def healthcheck(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +18,7 @@ def healthcheck(host, port):
         return True
     except socket.timeout:
         return False
-    except OSError as e:
+    except OSError:
         return False
 
 

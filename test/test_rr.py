@@ -58,7 +58,9 @@ def test_rr_ctx_none_dead():
     for count in counts.values():
         assert count == LOOP_COUNT
 
+
 def test_rr_ctx_one_dead():
+
     """
     testing the round robin context to make sure
     that it picks each backend equally
