@@ -1,5 +1,5 @@
-from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from http.client import HTTPConnection
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 class TestHandler(BaseHTTPRequestHandler):

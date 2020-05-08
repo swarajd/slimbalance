@@ -1,9 +1,8 @@
-from http.server import BaseHTTPRequestHandler
+import threading
 from http.client import HTTPConnection
+from http.server import BaseHTTPRequestHandler
 
 from config import HOSTNAME, PORT
-
-import threading
 
 
 class RoundRobinContext:

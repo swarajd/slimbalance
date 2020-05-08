@@ -1,6 +1,7 @@
-import threading
 import queue
+import threading
 from collections import defaultdict
+
 from methods.round_robin import RoundRobinContext
 from methods.util import Backend
 

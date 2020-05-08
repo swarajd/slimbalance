@@ -1,15 +1,14 @@
-from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from http.client import HTTPConnection
 import json
-from functools import partial
+import socket
 import threading
 import time
-import socket
-
-from methods.util import Backend, process_config
-from methods.round_robin import RoundRobinContext, RoundRobinHandler
+from functools import partial
+from http.client import HTTPConnection
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from config import HOSTNAME, PORT
+from methods.round_robin import RoundRobinContext, RoundRobinHandler
+from methods.util import Backend, process_config
 
 
 def test():
