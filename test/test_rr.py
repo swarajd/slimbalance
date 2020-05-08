@@ -14,13 +14,11 @@ def rr_thread(ctx, result_queue, loop_count):
     result_queue.put(backend_list)
 
 
-"""
-testing the round robin context to make sure
-that it picks each backend equally
-"""
-
-
 def test_rr_ctx_none_dead():
+    """
+    testing the round robin context to make sure
+    that it picks each backend equally
+    """
 
     LOOP_COUNT = 10
 
