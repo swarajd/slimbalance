@@ -1,10 +1,10 @@
 import threading
 
 class Backend:
-    def __init__(self, backend):
+    def __init__(self, backend, alive=False):
         self.host = backend["host"]
         self.port = backend["port"] if "port" in backend else 80
-        self.alive = False
+        self.alive = alive
         self.alive_lock = threading.Lock()
 
     def set_alive(self, alive):

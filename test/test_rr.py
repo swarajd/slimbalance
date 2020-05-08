@@ -4,33 +4,25 @@ from collections import defaultdict
 from methods.round_robin import RoundRobinContext
 from methods.util import Backend
 
-LOOP_COUNT = 10
-
-def rr_thread(ctx, result_queue):
+def rr_thread(ctx, result_queue, loop_count):
     backend_list = []
-    for i in range(LOOP_COUNT):
+    for i in range(loop_count):
         backend = ctx.get_next_backend()
         backend_list.append(backend)
 
     result_queue.put(backend_list)
     
 
-def test_rr_ctx():
+"""
+testing the round robin context to make sure
+that it picks each backend equally
+"""
+def test_rr_ctx_none_dead():
+
+    LOOP_COUNT = 10
 
     # set up backends
-    backend_ids = [
-        'a', 'b', 'c'
-    ]
-
-    backends = [
-        Backend({
-            'host': id
-        })
-        for id in backend_ids
-    ]
-
-    for backend in backends:
-        backend.set_alive(True)
+    backends = [Backend({'host': f"backend-{x}"}, alive=True) for x in range(3)]
 
     # create context and queue for results
     test_ctx = RoundRobinContext(backends)
@@ -40,22 +32,16 @@ def test_rr_ctx():
     threads = [
         threading.Thread(
             target=rr_thread,
-            args=(test_ctx,result_queue)
-        ),
-        threading.Thread(
-            target=rr_thread,
-            args=(test_ctx,result_queue)
-        ),
-        threading.Thread(
-            target=rr_thread,
-            args=(test_ctx,result_queue)
+            args=(test_ctx,result_queue,LOOP_COUNT)
         )
+        for backend in backends
     ]
 
     # run threads
     for thread in threads:
         thread.start()
 
+    # join threads
     for thread in threads:
         thread.join()
 
