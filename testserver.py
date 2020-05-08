@@ -1,8 +1,9 @@
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from http.client import HTTPConnection
 
+
 class TestHandler(BaseHTTPRequestHandler):
-    def log_request(self, code): 
+    def log_request(self, code):
         pass
 
     def request_handler(self):
@@ -13,16 +14,16 @@ class TestHandler(BaseHTTPRequestHandler):
         print(self.request_version)
         print(self.headers)
 
-        content_len = self.headers['Content-Length']
-        body=None
-        if content_len: 
+        content_len = self.headers["Content-Length"]
+        body = None
+        if content_len:
             body = self.rfile.read(int(content_len))
             print(body)
 
         self.send_response(200)
         self.end_headers()
 
-        self.wfile.write(b'ok')
+        self.wfile.write(b"ok")
 
     def do_GET(self):
         self.request_handler()
@@ -33,7 +34,7 @@ class TestHandler(BaseHTTPRequestHandler):
 
 # some sane defaults
 HOSTNAME = "localhost"
-PORT     = 8081
+PORT = 8081
 
 if __name__ == "__main__":
 

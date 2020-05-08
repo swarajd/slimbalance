@@ -5,6 +5,7 @@ from config import HOSTNAME, PORT
 
 import threading
 
+
 class RoundRobinContext:
     def __init__(self, backends):
         self.backends = backends
@@ -29,24 +30,24 @@ class RoundRobinContext:
                         self.idx = idx
                 return self.backends[idx]
             i += 1
-        
+
         return None
+
 
 # handler class for all incoming HTTP requests
 class RoundRobinHandler(BaseHTTPRequestHandler):
-
     def __init__(self, context, *args, **kwargs):
         self.context = context
         super().__init__(*args, **kwargs)
 
-    def log_request(self, code): 
+    def log_request(self, code):
         pass
 
     def request_handler(self):
 
-        content_len = self.headers['Content-Length']
-        body=None
-        if content_len: 
+        content_len = self.headers["Content-Length"]
+        body = None
+        if content_len:
             body = self.rfile.read(int(content_len))
 
         backend = self.context.get_next_backend()
@@ -54,7 +55,7 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
         if backend is None:
             self.send_response(503)
             self.end_headers()
-            self.wfile.write(b'no backends available')
+            self.wfile.write(b"no backends available")
             return
 
         # Check if the host matches the load balancer IP and replace accordingly
@@ -63,12 +64,7 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
             self.headers["Host"] = f"{backend.host}:{backend.port}"
 
         conn = HTTPConnection(backend.host, backend.port)
-        conn.request(
-            self.command, 
-            self.path,
-            headers=self.headers,
-            body=body
-        )
+        conn.request(self.command, self.path, headers=self.headers, body=body)
 
         resp = conn.getresponse()
 
@@ -102,4 +98,3 @@ class RoundRobinHandler(BaseHTTPRequestHandler):
 
     def do_PATCH(self):
         self.request_handler()
-        

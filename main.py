@@ -11,9 +11,11 @@ from methods.round_robin import RoundRobinContext, RoundRobinHandler
 
 from config import HOSTNAME, PORT
 
+
 def test():
     time.sleep(15)
     print("asdf bruh")
+
 
 def healthcheck(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,12 +29,14 @@ def healthcheck(host, port):
     except OSError as e:
         return False
 
+
 def health_checks(backends):
     while True:
         for backend in backends:
             alive = healthcheck(backend.host, backend.port)
             backend.set_alive(alive)
         time.sleep(20)
+
 
 if __name__ == "__main__":
     # load config
@@ -46,9 +50,7 @@ if __name__ == "__main__":
     HandlerClass = partial(RoundRobinHandler, rr_context)
 
     health_check_thread = threading.Thread(
-        target=health_checks,
-        args=(backends,),
-        daemon=True
+        target=health_checks, args=(backends,), daemon=True
     )
     health_check_thread.start()
 

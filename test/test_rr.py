@@ -4,6 +4,7 @@ from collections import defaultdict
 from methods.round_robin import RoundRobinContext
 from methods.util import Backend
 
+
 def rr_thread(ctx, result_queue, loop_count):
     backend_list = []
     for i in range(loop_count):
@@ -11,18 +12,20 @@ def rr_thread(ctx, result_queue, loop_count):
         backend_list.append(backend)
 
     result_queue.put(backend_list)
-    
+
 
 """
 testing the round robin context to make sure
 that it picks each backend equally
 """
+
+
 def test_rr_ctx_none_dead():
 
     LOOP_COUNT = 10
 
     # set up backends
-    backends = [Backend({'host': f"backend-{x}"}, alive=True) for x in range(3)]
+    backends = [Backend({"host": f"backend-{x}"}, alive=True) for x in range(3)]
 
     # create context and queue for results
     test_ctx = RoundRobinContext(backends)
@@ -30,10 +33,7 @@ def test_rr_ctx_none_dead():
 
     # create threads
     threads = [
-        threading.Thread(
-            target=rr_thread,
-            args=(test_ctx,result_queue,LOOP_COUNT)
-        )
+        threading.Thread(target=rr_thread, args=(test_ctx, result_queue, LOOP_COUNT))
         for backend in backends
     ]
 
