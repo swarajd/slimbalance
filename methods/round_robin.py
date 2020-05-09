@@ -1,7 +1,9 @@
 import threading
 
+from .util import Context
 
-class RoundRobinContext:
+
+class RoundRobinContext(Context):
     def __init__(self, backends):
         self.backends = backends
         self.idx_lock = threading.Lock()

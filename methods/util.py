@@ -1,6 +1,15 @@
+import abc
 import threading
 from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler
+
+
+class Context(abc.ABC):
+    @abc.abstractmethod
+    def get_next_backend(self):
+        """
+        get the next backend based on the context
+        """
 
 
 class Backend:
