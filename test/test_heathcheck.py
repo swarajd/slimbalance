@@ -4,7 +4,7 @@
 
 # from methods.round_robin import RoundRobinContext
 import socket
-from healthcheck import healthcheck, health_checks
+from healthcheck import healthcheck
 from unittest.mock import patch, MagicMock
 
 @patch('healthcheck.socket.socket')

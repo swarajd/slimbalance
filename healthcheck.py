@@ -13,11 +13,3 @@ def healthcheck(host, port):
         return False
     except OSError:
         return False
-
-
-def health_checks(backends):
-    while True:
-        for backend in backends:
-            alive = healthcheck(backend.host, backend.port)
-            backend.set_alive(alive)
-        time.sleep(20)
