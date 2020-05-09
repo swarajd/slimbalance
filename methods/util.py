@@ -1,4 +1,6 @@
 import threading
+from http.client import HTTPConnection
+from http.server import BaseHTTPRequestHandler
 
 
 class Backend:
@@ -18,6 +20,71 @@ class Backend:
 
     def __repr__(self):
         return f"(host: {self.host}, port: {self.port})"
+
+
+class LoadBalancerHandler(BaseHTTPRequestHandler):
+
+    """
+    handler class for all incoming HTTP requests
+    """
+
+    def __init__(self, context, *args, **kwargs):
+        self.context = context
+        super().__init__(*args, **kwargs)
+
+    def log_request(self, code):
+        pass
+
+    def request_handler(self):
+
+        content_len = self.headers["Content-Length"]
+        body = None
+        if content_len:
+            body = self.rfile.read(int(content_len))
+
+        backend = self.context.get_next_backend()
+
+        if backend is None:
+            self.send_response(503)
+            self.end_headers()
+            self.wfile.write(b"no backends available")
+            return
+
+        conn = HTTPConnection(backend.host, backend.port)
+        conn.request(self.command, self.path, headers=self.headers, body=body)
+
+        resp = conn.getresponse()
+
+        status = resp.status
+        headers = resp.getheaders()
+        body = resp.read()
+
+        self.send_response(status)
+
+        for header in headers:
+            key, val = header
+            self.send_header(key, val)
+        self.end_headers()
+
+        self.wfile.write(body)
+
+    def do_GET(self):
+        self.request_handler()
+
+    def do_HEAD(self):
+        self.request_handler()
+
+    def do_POST(self):
+        self.request_handler()
+
+    def do_PUT(self):
+        self.request_handler()
+
+    def do_DELETE(self):
+        self.request_handler()
+
+    def do_PATCH(self):
+        self.request_handler()
 
 
 def process_config(config):

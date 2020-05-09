@@ -6,8 +6,9 @@ from functools import partial
 from http.server import ThreadingHTTPServer
 
 from config import HOSTNAME, PORT
-from methods.round_robin import RoundRobinContext, RoundRobinHandler
-from methods.util import process_config
+from methods.round_robin import RoundRobinContext
+from methods.util import LoadBalancerHandler, process_config
+
 
 def healthcheck(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,7 +40,7 @@ if __name__ == "__main__":
 
     rr_context = RoundRobinContext(backends)
 
-    HandlerClass = partial(RoundRobinHandler, rr_context)
+    HandlerClass = partial(LoadBalancerHandler, rr_context)
 
     health_check_thread = threading.Thread(
         target=health_checks, args=(backends,), daemon=True
