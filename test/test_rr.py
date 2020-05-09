@@ -63,7 +63,7 @@ def test_rr_ctx_one_dead():
 
     """
     testing the round robin context to make sure
-    that it picks each backend equally
+    that it picks each REMAINING backend equally (one dead)
     """
 
     LOOP_COUNT = 10
