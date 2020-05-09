@@ -1,6 +1,7 @@
 [run]
 omit =
     testserver.py
+    config.py
 
 [report]
 exclude_lines =
