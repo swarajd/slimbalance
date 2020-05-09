@@ -113,3 +113,19 @@ def test_rr_ctx_one_dead():
             assert count == 0
         else:
             assert count == EXPECTED_COUNT
+
+def test_rr_ctx_all_dead():
+
+    """
+    testing the round robin context to make sure
+    that it returns None if no backends are available
+    """
+
+    # set up backends
+    backends = [Backend({"host": f"backend-{x}"}, alive=False) for x in range(3)]
+
+    # create context and queue for results
+    test_ctx = RoundRobinContext(backends)
+
+    backend = test_ctx.get_next_backend()
+    assert backend == None
