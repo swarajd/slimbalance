@@ -2,6 +2,7 @@
 omit =
     testserver.py
     config.py
+    main.py
 
 [report]
 exclude_lines =
