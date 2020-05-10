@@ -47,9 +47,9 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
     def request_handler(self):
 
         content_len = self.headers["Content-Length"]
-        body = None
+        self.body = None
         if content_len:
-            body = self.rfile.read(int(content_len))
+            self.body = self.rfile.read(int(content_len))
 
         backend = self.context.get_next_backend()
 
@@ -60,7 +60,7 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
             return
 
         conn = HTTPConnection(backend.host, backend.port)
-        conn.request(self.command, self.path, headers=self.headers, body=body)
+        conn.request(self.command, self.path, headers=self.headers, body=self.body)
 
         resp = conn.getresponse()
 

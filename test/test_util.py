@@ -5,6 +5,19 @@ from unittest.mock import MagicMock, Mock, call, patch
 from methods.util import Backend, LoadBalancerHandler
 
 
+class DummyResponse:
+    def __init__(self, status, headers, content):
+        self.status = status
+        self.headers = headers
+        self.content = content
+
+    def getheaders(self):
+        return self.headers
+
+    def read(self):
+        return self.content
+
+
 @patch("http.server.ThreadingHTTPServer")
 def test_handler_no_backends(mock_http_server):
     """
@@ -35,18 +48,6 @@ def test_handler_return_data(mock_http_server, mock_connection):
     appropriately
     """
 
-    class DummyResponse:
-        def __init__(self, status, headers, content):
-            self.status = status
-            self.headers = headers
-            self.content = content
-
-        def getheaders(self):
-            return self.headers
-
-        def read(self):
-            return self.content
-
     content = "a=1&b=2"
     request_str = f"POST / HTTP/1.1\nContent-Length: {len(content)}\nContent-Type: application/x-www-form-urlencoded\n\n{content}"
     request_bytes = bytes(request_str, "utf-8")
@@ -82,7 +83,7 @@ def test_handler_return_data(mock_http_server, mock_connection):
     handler.send_response = MagicMock()
     handler.send_header = MagicMock()
 
-    handler.rfile.read.return_value = content
+    handler.rfile.read.return_value = CONTENT
 
     handler.do_POST()
 
@@ -99,31 +100,34 @@ def test_handler_request_data(mock_http_server, mock_connection):
     ensuring that the handler gets the appropriate request data
     """
 
-    class DummyResponse:
-        def __init__(self, status, headers, content):
-            self.status = status
-            self.headers = headers
-            self.content = content
+    REQUEST_COMMAND = "POST"
+    REQUEST_PATH = "/"
+    REQUEST_CONTENT = "a=1&b=2"
+    REQUEST_CONTENT_BYTES = bytes(REQUEST_CONTENT, "utf-8")
+    REQUEST_HEADERS = {
+        "Content-Length": str(len(REQUEST_CONTENT)),
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
 
-        def getheaders(self):
-            return self.headers
+    REQUEST_HEADER_STR = "\n".join(
+        [f"{key}: {val}" for key, val in REQUEST_HEADERS.items()]
+    )
 
-        def read(self):
-            return self.content
-
-    content = "a=1&b=2"
-    request_str = f"POST / HTTP/1.1\nContent-Length: {len(content)}\nContent-Type: application/x-www-form-urlencoded\n\n{content}"
+    request_str = f"{REQUEST_COMMAND} {REQUEST_PATH} HTTP/1.1\n{REQUEST_HEADER_STR}\n\n{REQUEST_CONTENT}"
+    # print(request_str)
     request_bytes = bytes(request_str, "utf-8")
 
     mock_request = Mock()
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
-    STATUS = 200
-    HEADERS = [("c", "d"), ("e", "f")]
-    CONTENT = bytes(content, "utf-8")
+    RESPONSE_STATUS = 200
+    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
+    RESPONSE_CONTENT = b"dummy data"
 
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(STATUS, HEADERS, CONTENT)
+    conn.getresponse.return_value = DummyResponse(
+        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
+    )
 
     mock_connection.return_value = conn
 
@@ -141,14 +145,9 @@ def test_handler_request_data(mock_http_server, mock_connection):
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
     handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
-    handler.wfile = MagicMock()
-    handler.rfile = MagicMock()
-    handler.send_response = MagicMock()
-    handler.send_header = MagicMock()
 
-    # TODO: fix this so this value comes from the actual request
-    handler.rfile.read.return_value = content
-
-    handler.do_POST()
-
-    handler.rfile.read.assert_called_with(len(content))
+    assert handler.command == REQUEST_COMMAND
+    assert handler.path == REQUEST_PATH
+    for header in handler.headers:
+        assert REQUEST_HEADERS[header] == handler.headers[header]
+    assert handler.body == REQUEST_CONTENT_BYTES
