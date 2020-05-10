@@ -81,21 +81,15 @@ def test_handler_return_data(mock_http_server, mock_connection):
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
-
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
     handler.wfile = MagicMock()
     handler.rfile = MagicMock()
     handler.send_response = MagicMock()
@@ -142,33 +136,21 @@ def test_handler_request_data(mock_http_server, mock_connection):
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
     # set up response
-    RESPONSE_STATUS = 200
-    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
-    RESPONSE_CONTENT = b"dummy data"
-
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(
-        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
-    )
+    conn.getresponse.return_value = DummyResponse(200, [], b"dummy")
 
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
-
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
 
     # make assertions
     assert handler.command == REQUEST_COMMAND
@@ -207,33 +189,22 @@ def test_handler_put(mock_http_server, mock_connection):
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
     # set up response
-    RESPONSE_STATUS = 200
-    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
-    RESPONSE_CONTENT = b"dummy data"
-
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(
-        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
-    )
+    conn.getresponse.return_value = DummyResponse(200, [], b"dummy")
 
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
 
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
 
     # make assertions
     assert handler.command == REQUEST_COMMAND
@@ -262,33 +233,21 @@ def test_handler_delete(mock_http_server, mock_connection):
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
     # set up response
-    RESPONSE_STATUS = 200
-    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
-    RESPONSE_CONTENT = b"dummy data"
-
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(
-        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
-    )
+    conn.getresponse.return_value = DummyResponse(200, [], b"dummy")
 
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
-
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
 
     # make assertions
     assert handler.command == REQUEST_COMMAND
@@ -314,33 +273,22 @@ def test_handler_head(mock_http_server, mock_connection):
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
     # set up response
-    RESPONSE_STATUS = 200
-    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
-    RESPONSE_CONTENT = b"dummy data"
-
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(
-        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
-    )
+    conn.getresponse.return_value = DummyResponse(200, [], b"dummy")
 
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
 
     HandlerClass = partial(LoadBalancerHandler, context_mock)
 
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
 
     # make assertions
     assert handler.command == REQUEST_COMMAND
@@ -376,33 +324,20 @@ def test_handler_patch(mock_http_server, mock_connection):
     mock_request.makefile.return_value = io.BytesIO(request_bytes)
 
     # set up response
-    RESPONSE_STATUS = 200
-    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
-    RESPONSE_CONTENT = b"dummy data"
-
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(
-        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
-    )
+    conn.getresponse.return_value = DummyResponse(200, [], b"dummy")
 
     mock_connection.return_value = conn
 
     # set up backend
-    BACKEND_HOST = "localhost"
-    BACKEND_PORT = 8081
-
     context_mock = MagicMock()
     context_mock.get_next_backend.return_value = Backend(
-        {"host": BACKEND_HOST, "port": BACKEND_PORT}, alive=True
+        {"host": "dummy", "port": 1234}, alive=True
     )
 
     # set up handler
-    REQUEST_HOST = "localhost"
-    REQUEST_PORT = 8080
-
     HandlerClass = partial(LoadBalancerHandler, context_mock)
-
-    handler = HandlerClass(mock_request, (REQUEST_HOST, REQUEST_PORT), mock_http_server)
+    handler = HandlerClass(mock_request, ("request_host", 1234), mock_http_server)
 
     # make assertions
     assert handler.command == REQUEST_COMMAND
