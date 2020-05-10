@@ -48,19 +48,21 @@ def test_handler_return_data(mock_http_server, mock_connection):
     appropriately
     """
 
-    content = "a=1&b=2"
-    request_str = f"POST / HTTP/1.1\nContent-Length: {len(content)}\nContent-Type: application/x-www-form-urlencoded\n\n{content}"
-    request_bytes = bytes(request_str, "utf-8")
+    REQUEST_CONTENT = "a=1&b=2"
+    REQUEST_STR = f"POST / HTTP/1.1\nContent-Length: {len(REQUEST_CONTENT)}\nContent-Type: application/x-www-form-urlencoded\n\n{REQUEST_CONTENT}"
+    REQUEST_BYTES = bytes(REQUEST_STR, "utf-8")
 
     mock_request = Mock()
-    mock_request.makefile.return_value = io.BytesIO(request_bytes)
+    mock_request.makefile.return_value = io.BytesIO(REQUEST_BYTES)
 
-    STATUS = 200
-    HEADERS = [("c", "d"), ("e", "f")]
-    CONTENT = bytes(content, "utf-8")
+    RESPONSE_STATUS = 200
+    RESPONSE_HEADERS = [("c", "d"), ("e", "f")]
+    RESPONSE_CONTENT = bytes("asdf", "utf-8")
 
     conn = MagicMock()
-    conn.getresponse.return_value = DummyResponse(STATUS, HEADERS, CONTENT)
+    conn.getresponse.return_value = DummyResponse(
+        RESPONSE_STATUS, RESPONSE_HEADERS, RESPONSE_CONTENT
+    )
 
     mock_connection.return_value = conn
 
@@ -83,14 +85,16 @@ def test_handler_return_data(mock_http_server, mock_connection):
     handler.send_response = MagicMock()
     handler.send_header = MagicMock()
 
-    handler.rfile.read.return_value = CONTENT
+    handler.rfile.read.return_value = RESPONSE_CONTENT
 
     handler.do_POST()
 
-    handler.send_response.assert_called_with(STATUS)
+    handler.send_response.assert_called_with(RESPONSE_STATUS)
 
-    calls = list(map(lambda h: call(h[0], h[1]), HEADERS))
+    calls = list(map(lambda h: call(h[0], h[1]), RESPONSE_HEADERS))
     handler.send_header.assert_has_calls(calls)
+
+    handler.wfile.write.assert_called_with(RESPONSE_CONTENT)
 
 
 @patch("methods.util.HTTPConnection")
