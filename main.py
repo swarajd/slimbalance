@@ -4,6 +4,7 @@ import time
 from functools import partial
 from http.server import ThreadingHTTPServer
 
+from backend import Backend
 from config import HOSTNAME, PORT
 from handler import LoadBalancerHandler
 from healthcheck import healthcheck

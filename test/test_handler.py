@@ -2,8 +2,8 @@ import io
 from functools import partial
 from unittest.mock import MagicMock, Mock, call, patch
 
+from backend import Backend
 from handler import LoadBalancerHandler
-from methods.util import Backend
 
 
 class DummyResponse:

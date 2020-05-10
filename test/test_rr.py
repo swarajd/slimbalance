@@ -2,8 +2,8 @@ import queue
 import threading
 from collections import defaultdict
 
+from backend import Backend
 from methods.round_robin import RoundRobinContext
-from methods.util import Backend
 
 
 def rr_thread(ctx, result_queue, loop_count):
