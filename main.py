@@ -1,5 +1,6 @@
 import json
 import threading
+import time
 from functools import partial
 from http.server import ThreadingHTTPServer
 
@@ -8,12 +9,14 @@ from healthcheck import healthcheck
 from methods.round_robin import RoundRobinContext
 from methods.util import LoadBalancerHandler, process_config
 
+
 def health_checks(backends):
     while True:
         for backend in backends:
             alive = healthcheck(backend.host, backend.port)
             backend.set_alive(alive)
         time.sleep(20)
+
 
 if __name__ == "__main__":
     # load config

@@ -4,23 +4,26 @@
 
 # from methods.round_robin import RoundRobinContext
 import socket
-from healthcheck import healthcheck
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-@patch('healthcheck.socket.socket')
+from healthcheck import healthcheck
+
+
+@patch("healthcheck.socket.socket")
 def test_healthcheck_ok(socket_mock):
     """
     testing to see if the health check method
-    returns True if the socket is able to be 
+    returns True if the socket is able to be
     connected to
     """
 
-    HOST = 'testhost'
+    HOST = "testhost"
     PORT = 1234
     result = healthcheck(HOST, PORT)
-    assert result == True
+    assert result
 
-@patch('healthcheck.socket.socket')
+
+@patch("healthcheck.socket.socket")
 def test_healthcheck_timeout(socket_mock):
     """
     testing to see if the health check method
@@ -32,12 +35,13 @@ def test_healthcheck_timeout(socket_mock):
 
     socket_mock.return_value = socket_instance
 
-    HOST = 'testhost'
+    HOST = "testhost"
     PORT = 1234
     result = healthcheck(HOST, PORT)
-    assert result == False
+    assert not result
 
-@patch('healthcheck.socket.socket')
+
+@patch("healthcheck.socket.socket")
 def test_healthcheck_no_response(socket_mock):
     """
     testing to see if the health check method
@@ -49,7 +53,7 @@ def test_healthcheck_no_response(socket_mock):
 
     socket_mock.return_value = socket_instance
 
-    HOST = 'testhost'
+    HOST = "testhost"
     PORT = 1234
     result = healthcheck(HOST, PORT)
-    assert result == False
+    assert not result

@@ -114,6 +114,7 @@ def test_rr_ctx_one_dead():
         else:
             assert count == EXPECTED_COUNT
 
+
 def test_rr_ctx_all_dead():
 
     """
@@ -128,4 +129,4 @@ def test_rr_ctx_all_dead():
     test_ctx = RoundRobinContext(backends)
 
     backend = test_ctx.get_next_backend()
-    assert backend == None
+    assert backend is None

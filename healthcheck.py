@@ -1,5 +1,4 @@
 import socket
-import time
 
 
 def healthcheck(host, port):
