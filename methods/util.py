@@ -18,7 +18,3 @@ class Backend:
 
     def __repr__(self):
         return f"(host: {self.host}, port: {self.port})"
-
-
-def process_config(config):
-    return list(map(Backend, config["backends"]))

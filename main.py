@@ -8,7 +8,10 @@ from config import HOSTNAME, PORT
 from handler import LoadBalancerHandler
 from healthcheck import healthcheck
 from methods.round_robin import RoundRobinContext
-from methods.util import process_config
+
+
+def process_config(config):
+    return list(map(Backend, config["backends"]))
 
 
 def health_checks(backends):
