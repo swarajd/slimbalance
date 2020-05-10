@@ -1,6 +1,6 @@
 import threading
 
-from .util import Context
+from .context import Context
 
 
 class RoundRobinContext(Context):

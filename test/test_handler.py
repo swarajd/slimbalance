@@ -2,7 +2,8 @@ import io
 from functools import partial
 from unittest.mock import MagicMock, Mock, call, patch
 
-from methods.util import Backend, LoadBalancerHandler
+from handler import LoadBalancerHandler
+from methods.util import Backend
 
 
 class DummyResponse:
@@ -40,7 +41,7 @@ def test_handler_no_backends(mock_http_server):
     handler.wfile.write.assert_called_with(b"no backends available")
 
 
-@patch("methods.util.HTTPConnection")
+@patch("handler.HTTPConnection")
 @patch("http.server.ThreadingHTTPServer")
 def test_handler_return_data(mock_http_server, mock_connection):
     """
@@ -97,7 +98,7 @@ def test_handler_return_data(mock_http_server, mock_connection):
     handler.wfile.write.assert_called_with(RESPONSE_CONTENT)
 
 
-@patch("methods.util.HTTPConnection")
+@patch("handler.HTTPConnection")
 @patch("http.server.ThreadingHTTPServer")
 def test_handler_request_data(mock_http_server, mock_connection):
     """
@@ -157,7 +158,7 @@ def test_handler_request_data(mock_http_server, mock_connection):
 
 
 # TODO: abstract out the setup process somehow
-@patch("methods.util.HTTPConnection")
+@patch("handler.HTTPConnection")
 @patch("http.server.ThreadingHTTPServer")
 def test_handler_put(mock_http_server, mock_connection):
     """

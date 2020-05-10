@@ -5,9 +5,10 @@ from functools import partial
 from http.server import ThreadingHTTPServer
 
 from config import HOSTNAME, PORT
+from handler import LoadBalancerHandler
 from healthcheck import healthcheck
 from methods.round_robin import RoundRobinContext
-from methods.util import LoadBalancerHandler, process_config
+from methods.util import process_config
 
 
 def health_checks(backends):
