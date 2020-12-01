@@ -1,0 +1,20 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: local
+    hooks:
+      - id: black
+        name: format using black
+        entry: pipenv run black .
+        language: system
+        types: [python]
+      - id: isort
+        name: sort imports
+        entry: pipenv run isort
+        language: system
+        types: [python]
+      - id: flake8
+        name: flake8 checker
+        entry: pipenv run flake8
+        language: system
+        types: [python]

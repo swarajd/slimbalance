@@ -9,6 +9,7 @@ isort = "*"
 pytest = "*"
 pytest-cov = "*"
 flake8 = "*"
+pre-commit = "*"
 
 [packages]
 
