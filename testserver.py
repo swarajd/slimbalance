@@ -1,3 +1,4 @@
+import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
@@ -33,7 +34,10 @@ class TestHandler(BaseHTTPRequestHandler):
 
 # some sane defaults
 HOSTNAME = "localhost"
-PORT = 8081
+if sys.argv[1]:
+    PORT = int(sys.argv[1])
+else:
+    PORT = 8081
 
 if __name__ == "__main__":
 

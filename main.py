@@ -8,6 +8,7 @@ from backend import Backend
 from config import HOSTNAME, PORT
 from handler import LoadBalancerHandler
 from healthcheck import healthcheck
+from methods.ip_hashing import IPHashContext
 from methods.round_robin import RoundRobinContext
 
 
@@ -31,8 +32,9 @@ if __name__ == "__main__":
     backends = process_config(config)
 
     rr_context = RoundRobinContext(backends)
+    iphash_context = IPHashContext(backends)
 
-    HandlerClass = partial(LoadBalancerHandler, rr_context)
+    HandlerClass = partial(LoadBalancerHandler, iphash_context)
 
     health_check_thread = threading.Thread(
         target=health_checks, args=(backends,), daemon=True

@@ -1,30 +1,20 @@
-import threading
-
 from .context import Context
 
 
-class RoundRobinContext(Context):
+class IPHashContext(Context):
     def __init__(self, backends):
         self.backends = backends
-        self.idx_lock = threading.Lock()
-        self.idx = 0
         self.backend_len = len(self.backends)
 
-    def next_index(self):
-        with self.idx_lock:
-            self.idx = (self.idx + 1) % self.backend_len
-            return self.idx
-
+    # REWRITE
     def get_next_backend(self, context):
-        next_idx = self.next_index()
+        cur_hash = hash(context["address"][0])
+        next_idx = cur_hash % self.backend_len
         max_idx = self.backend_len + next_idx
         i = next_idx
         while i < max_idx:
             idx = i % self.backend_len
             if self.backends[idx].is_alive():
-                if i != next_idx:
-                    with self.idx_lock:
-                        self.idx = idx
                 return self.backends[idx]
             i += 1
 

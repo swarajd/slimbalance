@@ -8,8 +8,12 @@ from methods.round_robin import RoundRobinContext
 
 def rr_thread(ctx, result_queue, loop_count):
     backend_list = []
+
+    # value of context doesn't matter
+    context = None
+
     for i in range(loop_count):
-        backend = ctx.get_next_backend()
+        backend = ctx.get_next_backend(context)
         backend_list.append(backend)
 
     result_queue.put(backend_list)
@@ -128,5 +132,8 @@ def test_rr_ctx_all_dead():
     # create context and queue for results
     test_ctx = RoundRobinContext(backends)
 
-    backend = test_ctx.get_next_backend()
+    # value of passed in context doesn't matter
+    context = None
+
+    backend = test_ctx.get_next_backend(context)
     assert backend is None

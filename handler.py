@@ -22,7 +22,9 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
         if content_len:
             self.body = self.rfile.read(int(content_len))
 
-        backend = self.context.get_next_backend()
+        context = {"address": self.client_address, "headers": self.headers}
+
+        backend = self.context.get_next_backend(context)
 
         if backend is None:
             self.send_response(503)
