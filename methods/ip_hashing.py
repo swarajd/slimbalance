@@ -6,7 +6,6 @@ class IPHashContext(Context):
         self.backends = backends
         self.backend_len = len(self.backends)
 
-    # REWRITE
     def get_next_backend(self, context):
         cur_hash = hash(context["address"][0])
         next_idx = cur_hash % self.backend_len
