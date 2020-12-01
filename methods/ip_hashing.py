@@ -1,3 +1,5 @@
+import hashlib
+
 from .context import Context
 
 
@@ -7,8 +9,11 @@ class IPHashContext(Context):
         self.backend_len = len(self.backends)
 
     def get_next_backend(self, context):
-        cur_hash = hash(context["address"][0])
+        cur_hash = int(
+            hashlib.sha1(context["address"][0].encode("ascii")).hexdigest(), 16
+        )
         next_idx = cur_hash % self.backend_len
+        print(next_idx)
         max_idx = self.backend_len + next_idx
         i = next_idx
         while i < max_idx:
