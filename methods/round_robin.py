@@ -29,3 +29,6 @@ class RoundRobinContext(Context):
             i += 1
 
         return None
+
+    def cleanup(self, backend):
+        pass

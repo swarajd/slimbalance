@@ -1,10 +1,17 @@
+import hashlib
 import threading
 
 
 class Backend:
-    def __init__(self, backend, alive=False):
+    def __init__(self, backend, id=None, alive=False):
+        # unique identifier
+        self.id = id if id is not None else hashlib.md5().hexdigest()
+
+        # IP address + port
         self.host = backend["host"]
         self.port = backend["port"] if "port" in backend else 80
+
+        # health
         self.alive = alive
         self.alive_lock = threading.Lock()
 

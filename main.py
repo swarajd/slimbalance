@@ -9,6 +9,7 @@ from config import HOSTNAME, PORT
 from handler import LoadBalancerHandler
 from healthcheck import healthcheck
 from methods.ip_hashing import IPHashContext
+from methods.least_connections import LeastConnectionsContext
 from methods.round_robin import RoundRobinContext
 
 
@@ -31,10 +32,16 @@ if __name__ == "__main__":
 
     backends = process_config(config)
 
-    rr_context = RoundRobinContext(backends)
-    iphash_context = IPHashContext(backends)
+    context_dict = {
+        "round_robin": RoundRobinContext,
+        "ip_hash": IPHashContext,
+        "least_connections": LeastConnectionsContext,
+    }
 
-    HandlerClass = partial(LoadBalancerHandler, iphash_context)
+    chosen_context_class = context_dict[config["context"]]
+    context = chosen_context_class(backends)
+
+    HandlerClass = partial(LoadBalancerHandler, context)
 
     health_check_thread = threading.Thread(
         target=health_checks, args=(backends,), daemon=True

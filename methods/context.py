@@ -7,3 +7,9 @@ class Context(abc.ABC):
         """
         get the next backend based on the context
         """
+
+    @abc.abstractmethod
+    def cleanup(self):
+        """
+        clean up after the request has been forwarded
+        """

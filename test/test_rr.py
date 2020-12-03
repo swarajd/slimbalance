@@ -120,7 +120,6 @@ def test_rr_ctx_one_dead():
 
 
 def test_rr_ctx_all_dead():
-
     """
     testing the round robin context to make sure
     that it returns None if no backends are available
@@ -129,7 +128,7 @@ def test_rr_ctx_all_dead():
     # set up backends
     backends = [Backend({"host": f"backend-{x}"}, alive=False) for x in range(3)]
 
-    # create context and queue for results
+    # create context
     test_ctx = RoundRobinContext(backends)
 
     # value of passed in context doesn't matter
@@ -137,3 +136,19 @@ def test_rr_ctx_all_dead():
 
     backend = test_ctx.get_next_backend(context)
     assert backend is None
+
+
+def test_rr_ctx_cleanup():
+    """
+    testing that the round robin context has a cleanup method
+    """
+
+    # set up backends
+    backends = [Backend({"host": f"backend-{x}"}, alive=False) for x in range(1)]
+
+    # create context
+    test_ctx = RoundRobinContext(backends)
+
+    test_ctx.cleanup(None)
+
+    assert True

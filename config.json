@@ -1,4 +1,5 @@
 {
+    "context": "least_connections",
     "backends": [
         {
             "host": "localhost",

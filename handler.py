@@ -17,13 +17,16 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
 
     def request_handler(self):
 
+        # grab the request body
         content_len = self.headers["Content-Length"]
         self.body = None
         if content_len:
             self.body = self.rfile.read(int(content_len))
 
+        # construct a context object that the LB method context might use
         context = {"address": self.client_address, "headers": self.headers}
 
+        # select a backend to send the request to
         backend = self.context.get_next_backend(context)
 
         if backend is None:
@@ -32,6 +35,7 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"no backends available")
             return
 
+        # send the request to the selected backend and obtain the response
         conn = HTTPConnection(backend.host, backend.port)
         conn.request(self.command, self.path, headers=self.headers, body=self.body)
 
@@ -41,6 +45,10 @@ class LoadBalancerHandler(BaseHTTPRequestHandler):
         headers = resp.getheaders()
         body = resp.read()
 
+        # running any cleanup on the backend if need be
+        self.context.cleanup(backend)
+
+        # send the response back to the client
         self.send_response(status)
 
         for header in headers:

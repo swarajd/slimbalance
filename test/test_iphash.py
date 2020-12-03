@@ -65,3 +65,19 @@ def test_ip_hash_ctx_all_dead():
 
     backend = test_ctx.get_next_backend(context)
     assert backend is None
+
+
+def test_ip_hash_ctx_cleanup():
+    """
+    testing that the ip hash context has a cleanup method
+    """
+
+    # set up backends
+    backends = [Backend({"host": f"backend-{x}"}, alive=False) for x in range(1)]
+
+    # create context
+    test_ctx = IPHashContext(backends)
+
+    test_ctx.cleanup(None)
+
+    assert True
